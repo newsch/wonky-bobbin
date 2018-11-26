@@ -1,0 +1,120 @@
+\documentclass{tufte-handout}
+\usepackage{graphicx}
+\usepackage{url, amsmath,enumitem, amsbsy}
+\usepackage{hyperref}
+\hypersetup{urlcolor=magenta}
+\hypersetup{colorlinks=true}
+
+\newcommand*\Bell{\ensuremath{\boldsymbol\ell}}
+
+\newcommand{\twobytwo}[4]{\ensuremath{\begin{bmatrix} #1 & #2 \\ #3 & #4\end{bmatrix}}}
+\newcommand{\twobythree}[6]{\ensuremath{\begin{bmatrix} #1 & #2 & #3 \\ #4 & #5 & #6\end{bmatrix}}}
+
+\newcommand{\threebythree}[9]{\ensuremath{\begin{bmatrix} #1 & #2 & #3 \\ #4 & #5 & #6 \\ #7 & #8 & #9 \end{bmatrix}}}
+
+\newcommand{\onebytwo}[2]{\ensuremath{\begin{bmatrix} #1 & #2 \end{bmatrix}}}
+\newcommand{\onebythree}[3]{\ensuremath{\begin{bmatrix} #1 & #2 & #3 \end{bmatrix}}}
+
+\newcommand{\twobyone}[2]{\ensuremath{\begin{bmatrix} #1 \\ #2 \end{bmatrix}}}
+\newcommand{\threebyone}[3]{\ensuremath{\begin{bmatrix} #1 \\ #2 \\ #3 \end{bmatrix}}}
+
+\newcommand{\fourbyone}[4]{\ensuremath{\begin{bmatrix} #1 \\ #2 \\ #3 \\ #4 \end{bmatrix}}}
+
+\newcommand{\R}{\mathbf{R}}
+\newcommand{\X}{\mathbf{X}}
+\newcommand{\A}{\mathbf{A}}
+\newcommand{\B}{\mathbf{B}}
+\renewcommand{\C}{\mathbf{C}}
+\renewcommand{\S}{\mathbf{S}}
+\renewcommand{\u}{\mathbf{u}}
+\renewcommand{\v}{\mathbf{v}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\y}{\mathbf{y}}
+\renewcommand{\a}{\mathbf{a}}
+\renewcommand{\b}{\mathbf{b}}
+\renewcommand{\t}{\mathbf{t}}
+\newcommand{\p}{\mathbf{p}}
+\newcommand{\T}{\mathbf{T}}
+\renewcommand{\U}{\mathbf{U}}
+\newcommand{\V}{\mathbf{V}}
+\newcommand{\D}{\mathbf{D}}
+\renewcommand{\L}{\mathbf{L}}
+\renewcommand{\U}{\mathbf{U}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\I}{\mathbf{I}}
+
+\usepackage[iso,american]{isodate}
+\usepackage{fancyhdr}
+\fancypagestyle{firstpage}{
+  \rhead{Quantitative Engineering Analysis, Homework Template \linebreak
+  \textit{Version: \today}}
+}
+
+\title{Some Cool Title}
+\author{QEA}
+\date{Fall 2018}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{firstpage}
+
+
+\section{What is this about?}
+
+The big ideas of this assignment are ...... The ideas contained here can be applied in many ways (many of which we won't get to until next semester) such as
+\begin{itemize}
+\item this.
+\item and this.
+\end{itemize}
+
+\section{Learning Goals}
+
+\begin{itemize}
+\item Learn the definition and properties of ...
+\item Understand the significance of ...
+\item Be able to.....
+\end{itemize}
+
+
+\section{Reference Material}
+
+\begin{itemize}
+\item \href{https://www.youtube.com/watch?v=1kwMnB0PAVQ}{Link to some awesome resource} 
+\item Some other cool stuff
+\end{itemize}
+
+\section{This is a Section Heading [1 hr]}
+
+With an equation in it
+
+\begin{align}
+E  = mc^2 \label{eqn:EvalDef}
+\end{align}
+
+From the equation in \eqref{eqn:EvalDef},  we can see that mass and energy are equivalent and we can readily convert one to the other.
+
+\begin{enumerate}[resume]
+\item And some exercises!
+\end{enumerate}
+
+
+\subsection{Here's a subsection [5 hrs]}
+
+\begin{enumerate}[resume]
+\item  With some longer exercises in it
+\end{enumerate}
+
+\section{Etc}
+
+Uncomment this to get a figure.
+
+%\begin{figure}
+%\includegraphics[width=11cm]{figs/Saddle_point_contour.pdf}
+%\caption{Contour plot of $f(\x)$. }
+%\label{figSaddlePointContour}
+%\end{figure}
+
+%Figure \ref{figSaddlePointSurf} 
+
+\end{document} 
