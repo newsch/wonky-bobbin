@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
+from scipy.ndimage import convolve
+
 
 # numpy representation of the RPi camera module v1 Bayer Filter
 bayerGrid = np.zeros((1944, 2592, 3), dtype=np.uint8)
@@ -30,6 +32,20 @@ def get_bw_array(fp, dtype=np.uint64, width: int = None, height: int = None):
     """Return a 2-dimensional black-and-white numpy array of an image."""
     a = get_rgb_array(fp, dtype=dtype, width=width, height=height)
     return np.mean(a, axis=2)
+
+def rgb_convolve(image, kernel, mode='constant', cval=0.0, **kwargs):
+    """Apply a convolution kernel to the RGB layers of an image independently.
+
+    This applies scipy.ndimage.convolve with any additional parameters to the R,
+    G, and B slices of array `image`.
+
+    :param image: 3-dimensional numpy array of the image.
+    :param kernel: 2-dimensional numpy array to convolve with the image.
+    """
+    res = np.zeros(image.shape, dtype=image.dtype)
+    for i in range(3):
+        res[:,:,i] = convolve(image[:,:,i], kernel, mode=mode, cval=cval, **kwargs)
+    return res
 
 
 def getBayer(filename: str, ver: int = 1):
