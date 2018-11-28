@@ -1,36 +1,61 @@
-
-import numpy as np
-import matplotlib.pyplot as plt
-from PIL import Image
-
 import io
 import time
-from numpy.lib.stride_tricks import as_strided
-# load our pickled stream object containing the image data
-import pickle
 
-from scipy.signal import convolve
+import matplotlib.pyplot as plt
+import numpy as np
+from PIL import Image
+
+
+# numpy representation of the RPi camera module v1 Bayer Filter
 bayerGrid = np.zeros((1944, 2592, 3), dtype=np.uint8)
 bayerGrid[1::2, 0::2, 0] = 1 # Red
 bayerGrid[0::2, 0::2, 1] = 1 # Green
 bayerGrid[1::2, 1::2, 1] = 1 # Green
 bayerGrid[0::2, 1::2, 2] = 1 # Blue
 
-def getBayer(filename):
-    with open(filename,'rb') as f:
-        stream = pickle.load(f)
-    # # alternatively, just open the jpeg file (also works)
-    # with open('wall1.jpeg', 'rb') as f:
-    #     stream = io.BytesIO(f.read())
+
+def get_rgb_array(fp, dtype=np.uint64, width: int = None, height: int = None):
+    """Return a 3-dimensional RGB numpy array of an image."""
+    im = Image.open(fp)
+    if height is not None or width is not None:
+        cwidth, cheight = im.size
+        if width is None:
+            width = int(height * cwidth/cheight)
+        elif height is None:
+            height = int(width * cheight/cwidth)
+        im = im.resize((width, height))
+    return np.array(im, dtype=dtype)
+
+def get_bw_array(fp, dtype=np.uint64, width: int = None, height: int = None):
+    """Return a 2-dimensional black-and-white numpy array of an image."""
+    a = get_rgb_array(fp, dtype=dtype, width=width, height=height)
+    return np.mean(a, axis=2)
+
+
+def getBayer(filename: str, ver: int = 1):
+    """Return the Bayer data from an RPi camera image.
+
+    Note: this requires the Bayer output to be appended to the end of the
+    image file. This can be done from the commandline by passing the `--raw`
+    flag into the `raspistill` program and from the `picamera` Python module by
+    passing `bayer=True` into the `PiCamera.capture` function.
+    
+    This uses code from the `picamera` module's documentation section on "Raw
+    Bayer data captures". See https://picamera.readthedocs.io/en/release-1.13/recipes2.html#raw-bayer-data-captures
+
+    :param ver: Version of the Raspberry Pi camera. Either 1 or 2.
+    """
+    # open file and save to 
+    with open('wall1.jpeg', 'rb') as f:
+        stream = io.BytesIO(f.read())
     assert isinstance(stream, io.BytesIO)
-    ver = 1  # we used a v1 camera module for this image. Use `2` for v2
 
     offset = {
         1: 6404096,
         2: 10270208,
         }[ver]
     data = stream.getvalue()[-offset:]
-    assert data[:4] == b'BRCM'
+    assert data[:4] == b'BRCM'  # ensure bayer header is present
     data = data[32768:]
     data = np.frombuffer(data, dtype=np.uint8)
 
