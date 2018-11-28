@@ -61,18 +61,17 @@ def getBayer(filename: str, ver: int = 1):
 
     :param ver: Version of the Raspberry Pi camera. Either 1 or 2.
     """
-    # open file and save to 
-    with open('wall1.jpeg', 'rb') as f:
-        stream = io.BytesIO(f.read())
-    assert isinstance(stream, io.BytesIO)
-
     offset = {
         1: 6404096,
         2: 10270208,
         }[ver]
-    data = stream.getvalue()[-offset:]
-    assert data[:4] == b'BRCM'  # ensure bayer header is present
-    data = data[32768:]
+
+    # open file and extract bayer data
+    with open(filename, 'rb') as f:
+        data = f.read()[-offset:]
+
+    assert data[:4] == b'BRCM', "Could not find bayer data header"
+    data = data[32768:]  # strip header data
     data = np.frombuffer(data, dtype=np.uint8)
 
     # For the V1 module, the data consists of 1952 rows of 3264 bytes of data.
@@ -133,5 +132,4 @@ def getBayer(filename: str, ver: int = 1):
     rgb8 = uint16_to_uint8(rgb)
     np.max(rgb8)
 
-
-    return(rgb8)
+    return rgb8
