@@ -2,12 +2,20 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
-% matplotlib inline
+
 import io
 import time
 from numpy.lib.stride_tricks import as_strided
 # load our pickled stream object containing the image data
 import pickle
+
+from scipy.signal import convolve
+bayerGrid = np.zeros((1944, 2592, 3), dtype=np.uint8)
+bayerGrid[1::2, 0::2, 0] = 1 # Red
+bayerGrid[0::2, 0::2, 1] = 1 # Green
+bayerGrid[1::2, 1::2, 1] = 1 # Green
+bayerGrid[0::2, 1::2, 2] = 1 # Blue
+
 def getBayer(filename):
     with open(filename,'rb') as f:
         stream = pickle.load(f)
@@ -83,4 +91,6 @@ def getBayer(filename):
     # uint16_to_uint8 = lambda a: (a >> 2).astype(np.uint8)  # or bit-shift as suggested at the end
     rgb8 = uint16_to_uint8(rgb)
     np.max(rgb8)
+
+
     return(rgb8)
