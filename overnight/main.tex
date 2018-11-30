@@ -90,14 +90,14 @@ images and the digital representation of them, including:
 
 \begin{itemize}
 \item \href{https://en.wikipedia.org/wiki/Bayer_filter
-}{Link to Wikipedia page on Bayer Grid} 
+}{Link to Wikipedia page on Bayer Grid}
 \item Some other cool stuff
 \end{itemize}
 
 \section{Image manipulation [3 hr]}
 
 \subsection{Review (now in Python)}
-\href{https://drive.google.com/file/d/0B7LNBbaxYFujOHpEU2FDdkF6VEE/view 
+\href{https://drive.google.com/file/d/0B7LNBbaxYFujOHpEU2FDdkF6VEE/view
 }{Link to faces assignment}
 Re-familiarize yourself with some of the image manipulation we did in the faces module, specifically the brightness and contrast section (problems 9-14) of the linked overnight. Implement these problems in Python, using numpy opperations
 
@@ -110,7 +110,7 @@ We'll do this by convolving the fairly complex and discrete matrix of an image w
 
 Take the discrete convolution of these two 3x3 matrices for example:
 \begin{align}
-    \threebythree{0}{0}{0}{0}{2}{0}{0}{0}{0} * \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1} = 
+    \threebythree{0}{0}{0}{0}{2}{0}{0}{0}{0} * \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1} =
     \threebythree{2}{2}{2}{2}{2}{2}{2}{2}{2}
 \end{align}
 
@@ -118,7 +118,7 @@ One way to read think of this (with the left matrix as our "kernel" and the righ
 
 In practice, this is equivalent to the following two operations:
 \begin{align}\label{eqn:convolution1}
-    \begin{bmatrix}2\end{bmatrix} * \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1} = 
+    \begin{bmatrix}2\end{bmatrix} * \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1} =
     \threebythree{2}{2}{2}{2}{2}{2}{2}{2}{2}
 \end{align}
 
@@ -140,7 +140,7 @@ However, the kernel we used in the initial example is not a particularly excitin
 
 Let's look at the following example:
 \begin{align}\label{eqn:convolution2}
-    \threebythree{0}{1}{0}{1}{2}{1}{0}{1}{0} * \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1} = 
+    \threebythree{0}{1}{0}{1}{2}{1}{0}{1}{0} * \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1} =
     \threebythree{4}{5}{4}{5}{6}{5}{4}{5}{4}
 \end{align}
 Again, you can read this as \emph{"For every element in the image, sum the element multiplied by 2 with the values of its cardinal neighbors"}.
@@ -182,15 +182,15 @@ If you'd like more information, I would highly recommend \href{http://setosa.io/
 \begin{enumerate}[resume]
 \item Sharpness:
 Find the kernel used for sharpening images in the Wikipedia article above, and try it out on a grayscale image (make sure the image isn't too large, or the results will be hard to see).
-\item Edge detection: Now use the kernel used in edge detection. 
+\item Edge detection: Now use the kernel used in edge detection.
 \end{enumerate}
 
 
 \subsection{Gamma Correction}  % TODO: (Hadleigh)
 \href{https://en.wikipedia.org/wiki/Gamma_correction}{link to Wikipedia page on Gamma Correction}
-Gamma correction is a technique to remap the pixel values of a digital image according to a logarithmic scale to range more readable to human eyes. 
+Gamma correction is a technique to remap the pixel values of a digital image according to a logarithmic scale to range more readable to human eyes.
 \begin{enumerate}
-    \item Use the numpy power function to raise each element in an array to a power between one and 0. 
+    \item Use the numpy power function to raise each element in an array to a power between one and 0.
     \item Read the Wikipedia page and try using the value suggested there.
 \end{enumerate}
 \section{Intro to Demosaicing}
@@ -201,7 +201,7 @@ Gamma correction is a technique to remap the pixel values of a digital image acc
 % latest
 
 \subsection{Simple Demosaicing w/ Convolution}
-The most basic method for debayering a digital color image is to simply use nearest neighbor interpolation. This can be accomplished quickly convolving the mosaic image with 3 by 3 kernel. Look back at \href{https://drive.google.com/file/d/1_eEtwNDHhF-Izfcf6l00PvG-b6whwety/view}{FitBit Night 2} problems 2 and 7 to remind yourself of how moving average filters and convolution work. Then implement this simple debayering in Python. 
+The most basic method for debayering a digital color image is to simply use nearest neighbor interpolation. This can be accomplished quickly convolving the mosaic image with 3 by 3 kernel. Look back at \href{https://drive.google.com/file/d/1_eEtwNDHhF-Izfcf6l00PvG-b6whwety/view}{FitBit Night 2} problems 2 and 7 to remind yourself of how moving average filters and convolution work. Then implement this simple debayering in Python.
 
 % note artifacts
 % what else is needed?
@@ -214,8 +214,8 @@ The most basic method for debayering a digital color image is to simply use near
 \subsection{Prep for other algorithm}  % TODO: decide on another algorithm to discuss
 
 \subsection{PCA denoising algorithm}  % TODO: (Hadleigh)
-Local Pixel Grouping and Principal Component Analysis are commonly used in image denoising algorithms. Image noise is mostly spatially independent, meaning that by analyzing the principal components of small groups of pixels, the noise patterns can be determined. 
-\href{https://www4.comp.polyu.edu.hk/~cslzhang/paper/PR_10_x_3.pdf}{Here is a paper detailing a LPG and PCA based denoising algorithm}. Scan the paper, paying most attention to the procedure needed to implement this process. Write out pseudo-code for the procedure. %TODO: Write and scan pseudocode (Hadleigh) 
+Local Pixel Grouping and Principal Component Analysis are commonly used in image denoising algorithms. Image noise is mostly spatially independent, meaning that by analyzing the principal components of small groups of pixels, the noise patterns can be determined.
+\href{https://www4.comp.polyu.edu.hk/~cslzhang/paper/PR_10_x_3.pdf}{Here is a paper detailing a LPG and PCA based denoising algorithm}. Scan the paper, paying most attention to the procedure needed to implement this process. Write out pseudo-code for the procedure. %TODO: Write and scan pseudocode (Hadleigh)
 
 \begin{align}
  \mu_{d} = \frac{1}{N} \sum_{i=1}^{N} d_{i} \label{eqn:Mean}
@@ -225,7 +225,7 @@ Local Pixel Grouping and Principal Component Analysis are commonly used in image
 \Phi = \mathbf{MM}^{T} \label{eqn:Covariance}
 \end{align}
 
-\eqref{eqn:Mean} is the equation for the mean value of an image. This value should be subtracted from the matrix of pixel values to mean center the image for co-variance \eqref{eqn:Covariance} and eigen decomposition.  
+\eqref{eqn:Mean} is the equation for the mean value of an image. This value should be subtracted from the matrix of pixel values to mean center the image for co-variance \eqref{eqn:Covariance} and eigen decomposition.
 
 
 
@@ -245,6 +245,6 @@ Uncomment this to get a figure.
 %\label{figSaddlePointContour}
 %\end{figure}
 
-%Figure \ref{figSaddlePointSurf} 
+%Figure \ref{figSaddlePointSurf}
 
-\end{document} 
+\end{document}
