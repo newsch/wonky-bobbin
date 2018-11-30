@@ -1,64 +1,40 @@
 \documentclass{tufte-handout}
-\usepackage{graphicx}
-\usepackage{url, amsmath,enumitem, amsbsy}
-\usepackage{hyperref}
-\hypersetup{urlcolor=magenta}
-\hypersetup{colorlinks=true}
+\usepackage{./fall2018_preamble_v1.0}
 
-\newcommand*\Bell{\ensuremath{\boldsymbol\ell}}
+\IfSubStr{\jobname}{\detokenize{Solutions}}{\toggletrue{solutions}}{\togglefalse{solutions}}
 
-\newcommand{\twobytwo}[4]{\ensuremath{\begin{bmatrix} #1 & #2 \\ #3 & #4\end{bmatrix}}}
-\newcommand{\twobythree}[6]{\ensuremath{\begin{bmatrix} #1 & #2 & #3 \\ #4 & #5 & #6\end{bmatrix}}}
+\fancypagestyle{firstpage}
 
-\newcommand{\threebythree}[9]{\ensuremath{\begin{bmatrix} #1 & #2 & #3 \\ #4 & #5 & #6 \\ #7 & #8 & #9 \end{bmatrix}}}
-
-\newcommand{\onebytwo}[2]{\ensuremath{\begin{bmatrix} #1 & #2 \end{bmatrix}}}
-\newcommand{\onebythree}[3]{\ensuremath{\begin{bmatrix} #1 & #2 & #3 \end{bmatrix}}}
-
-\newcommand{\twobyone}[2]{\ensuremath{\begin{bmatrix} #1 \\ #2 \end{bmatrix}}}
-\newcommand{\threebyone}[3]{\ensuremath{\begin{bmatrix} #1 \\ #2 \\ #3 \end{bmatrix}}}
-
-\newcommand{\fourbyone}[4]{\ensuremath{\begin{bmatrix} #1 \\ #2 \\ #3 \\ #4 \end{bmatrix}}}
-
-\newcommand{\R}{\mathbf{R}}
-\newcommand{\X}{\mathbf{X}}
-\newcommand{\A}{\mathbf{A}}
-\newcommand{\B}{\mathbf{B}}
-\renewcommand{\C}{\mathbf{C}}
-\renewcommand{\S}{\mathbf{S}}
-\renewcommand{\u}{\mathbf{u}}
-\renewcommand{\v}{\mathbf{v}}
-\newcommand{\x}{\mathbf{x}}
-\newcommand{\y}{\mathbf{y}}
-\renewcommand{\a}{\mathbf{a}}
-\renewcommand{\b}{\mathbf{b}}
-\renewcommand{\t}{\mathbf{t}}
-\newcommand{\p}{\mathbf{p}}
-\newcommand{\T}{\mathbf{T}}
-\renewcommand{\U}{\mathbf{U}}
-\newcommand{\V}{\mathbf{V}}
-\newcommand{\D}{\mathbf{D}}
-\renewcommand{\L}{\mathbf{L}}
-\renewcommand{\U}{\mathbf{U}}
-\newcommand{\M}{\mathbf{M}}
-\newcommand{\I}{\mathbf{I}}
-
-\usepackage[iso,american]{isodate}
-\usepackage{fancyhdr}
-\fancypagestyle{firstpage}{
-  \rhead{Quantitative Engineering Analysis, Homework Template \linebreak
-  \textit{Version: \today}}
-}
+{\rhead{Overnight Overnight \linebreak \textit{Version: \today}}}
 
 \title{Some Cool Title}
 \author{QEA}
 \date{Fall 2018}
+
+\toggletrue{solutions}
+% \togglefalse{solutions}
 
 \begin{document}
 
 \maketitle
 \thispagestyle{firstpage}
 
+% in the first problem block, make sure to use the series option for enumerate
+\begin{enumerate}[series=exercises, label=\textbf{Exercise} (\arabic*)]
+\item The text of the first exercise
+\solution{Here is the solution.}
+\end{enumerate}
+% when adding a second block of problems make sure to use "resume" instead of "series"
+\begin{enumerate}[resume=exercises, label=\textbf{Exercise} (\arabic*)]
+\item The text of the second exercise.
+\iftoggleverb{solutions}
+\textbf{Solution:}
+\begin{lstlisting}
+x = linspace(0, 2*pi, 100);
+y = 5;
+\end{lstlisting}
+\fi
+\end{enumerate}
 
 \section{Overview}
 The goal of this assignment is to get familiar with the concepts of digital image processing and the mathematical concepts involved with them. In this assignment you'll implement some of the more common photo manipulation methods and learn some concepts that will prepare you for further work in this area.
@@ -164,11 +140,9 @@ As you may have discerned from the above example \eqref{eqn:convolution2}, we're
     \end{enumerate}
     What do you notice about their effects? How do the results of kernel 2 differ from kernel 3?
 \item Can you think of an "identity" kernel, that returns the same image?
-\linebreak
-\emph{Solution:}
-\begin{align*}
-    \threebythree{0}{0}{0}{0}{1}{0}{0}{0}{0}
-\end{align*}
+\solution{\threebythree{0}{0}{0}{0}{1}{0}{0}{0}{0} or similar (could be
+different dimensions)}
+
 \end{enumerate}
 
 \subsection{Convolution for Image Manipulation}  % TODO: (Evan)
