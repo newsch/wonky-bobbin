@@ -15,6 +15,7 @@
 
 \section{Introduction}
 
+
 % TODO: fig: overview of pipeline components
 
 % TODO: fig: bayer grid image
@@ -28,36 +29,47 @@
 % TODO: fig: white balance comparison
 
 \section{Mathematical Background}
+The mathematical procedures we use are based mainly in Linear Algebra, Multivariable Calculus and Signal Processing. 
+Convolution is a process which 
+
 \begin{itemize}
-    \item background from linear algebra
-    Variance, covariance, eigenvectors, PCA, SVD.
+    \item background from linear algebra/ multivariable calculus
+    Variance, covariance, eigenvectors, PCA, Gradient, level curves 
     
     \item background from signal processing, specifically digital signal processing.
-    Convolution, convolution in two dimentions. 
+    Convolution, convolution in two dimensions. 
     
 \end{itemize}
 
 \section{Quantitative Procedure}
 
-\begin{itemize}
-    \item Debayering
+\subsection{Debayering}
     The simplest method of debayering is nearest neighbor interpolation, which we implemented by convolving a  $3x3$ kernel with each of the color channels. In the raw image, the matrix of each color channel contains values only in pixels corresponding to a sencel of the corresponding color. Pixel locations corresponding to a different color channel are occupied by zeros. By convolving the matrix 
     \begin{align}
         \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1}
     \end{align}
-    with each channel we are essentially averaging the adjacent pixel values of each pixel. This is a rudimentary technique, and will create some artifacts. 
-    \item Gamma Correction
-    Raw digital images often appear dark because the human eye perceives light non-linearly. To correct for this, the pixel values of a digital image are adjusted according to a power function. 
-
-    \begin{equation}
-        V_{out} = V_{in}^{\gamma}
-    \end{equation}
+    with each channel we are essentially averaging the adjacent pixel values of each pixel, including those diagonally adjacent. This is a rudimentary technique, and will create some artifacts, one of the more prominent being a 'zippering' effect caused by %TODO: details on zippering
     
-    \item Sharpening
-    \item White Balance 
-\end{itemize}
+    There are many more complex approaches to debayering designed to reduce the artifacts created in the process. We implement 
+\subsection{Gamma Correction}
+    Raw digital images are often hard to interpret, as even when scaled to a full RGB range, the non-white parts of the image appear dark with little contrast. This effect occurs because the human eye perceives light non-linearly, meaning that though there may be a significant linear numerical variance in darker regions of an image, those differences are hard to interpret visually. To correct for this, the pixel values of a digital image are adjusted according to a power function. 
+    \begin{equation}
+        V_{out} = AV_{in}^{\gamma} \label{eqn:Gamma}
+    \end{equation}
+    The expression \eqref{eqn:Gamma} is the general form of the gamma function, where $A$ is a constant scalar, $V_{in}$ and $V_{out}$ are the input and output signals, respectively. 
+    Typically for a "decoding" $\gamma$, a $\gamma$  function meant to re-scale a digital image for human viewing, a $\gamma < 1$ is used to enhance the visibility of non-white areas. 
+\subsection{Sharpening}
+    We use another convolution process to sharpen images. The kernel 
+    \begin{align}
+        \threebythree{0}{-1}{0}{-1}{5}{-1}{0}{-1}{0}
+    \end{align}
+    when convolved with an image produces a sharpened image, as color values which are highly present in neighboring pixels are reduced if not as present in the target pixel.  
+
 
 \subsection{White Balance}
+
+\subsection{Further Applications}
+
 
 \section{Results and discussion}
 
