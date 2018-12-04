@@ -5,9 +5,9 @@
 
 \fancypagestyle{firstpage}
 
-{\rhead{Overnight Overnight \linebreak \textit{Version: \today}}}
+{\rhead{How Can Images Be Real If Our Cameras' Representations Of Light Aren't Real? \linebreak \textit{Version: \today}}}
 
-\title{Some Cool Title}
+\title{Overnight Overnight: How Can Images Be Real If Our Cameras' Representations Of Light Aren't Real?}
 \author{QEA}
 \date{Fall 2018}
 
@@ -19,22 +19,22 @@
 \maketitle
 \thispagestyle{firstpage}
 
-% in the first problem block, make sure to use the series option for enumerate
-\begin{enumerate}[series=exercises, label=\textbf{Exercise} (\arabic*)]
-\item The text of the first exercise
-\solution{Here is the solution.}
-\end{enumerate}
-% when adding a second block of problems make sure to use "resume" instead of "series"
-\begin{enumerate}[resume=exercises, label=\textbf{Exercise} (\arabic*)]
-\item The text of the second exercise.
-\iftoggleverb{solutions}
-\textbf{Solution:}
-\begin{lstlisting}
-x = linspace(0, 2*pi, 100);
-y = 5;
-\end{lstlisting}
-\fi
-\end{enumerate}
+% % in the first problem block, make sure to use the series option for enumerate
+% \begin{enumerate}[series=exercises, label=\textbf{Exercise} (\arabic*)]
+% \item The text of the first exercise
+% \solution{Here is the solution.}
+% \end{enumerate}
+% % when adding a second block of problems make sure to use "resume" instead of "series"
+% \begin{enumerate}[resume=exercises, label=\textbf{Exercise} (\arabic*)]
+% \item The text of the second exercise.
+% \iftoggleverb{solutions}
+% \textbf{Solution:}
+% \begin{lstlisting}
+% x = linspace(0, 2*pi, 100);
+% y = 5;
+% \end{lstlisting}
+% \fi
+% \end{enumerate}
 
 \section{Overview}
 The goal of this assignment is to get familiar with the concepts of digital image processing and the mathematical concepts involved with them. In this assignment you'll implement some of the more common photo manipulation methods and learn some concepts that will prepare you for further work in this area.
@@ -72,15 +72,14 @@ images and the digital representation of them, including:
 
 \section{Image manipulation [3 hr]}
 
-\subsection{Review (now in Python)}
+\subsection{Review of Image Manipulation (now in Python)}
 \href{https://drive.google.com/file/d/0B7LNBbaxYFujOHpEU2FDdkF6VEE/view
 }{Link to faces assignment}
 Re-familiarize yourself with some of the image manipulation we did in the faces module, specifically the brightness and contrast section (problems 9-14) of the linked overnight. Implement these problems in Python, using numpy opperations
 
-\subsection{2D Convolution w/ Kernels}  % TODO: (Evan)
+\subsection{2D Convolution w/ Kernels}
 
-% TODO: more introduction...
-You already were introduced to the concept of convolution in (some assignment). In this overnight assignment we're going to use it with discrete 2-dimensional signals: images!
+You already were introduced to the concept of convolution in \href{https://drive.google.com/file/d/1_eEtwNDHhF-Izfcf6l00PvG-b6whwety/view}{FitBit Night 2}. In this overnight assignment we're going to use it with discrete 2-dimensional signals: images!
 
 We'll do this by convolving the fairly complex and discrete matrix of an image with a much smaller and simpler matrix commonly called a kernel. This kernel can be used to quickly perform algebraic operations on the pixels of an image relative to their neighbors.
 
@@ -124,41 +123,85 @@ Again, you can read this as \emph{"For every element in the image, sum the eleme
 One thing we haven't talked about yet is how to treat the elements on the edges of the matrix that aren't bordered by 8 other elements. There are several methods that can be used when calculating the convolution, including:
 \begin{itemize}
     \item ignoring values in the matrix that aren't completely bordered (this results in a matrix with $n-2$ fewer rows and columns)
-    \item "wrapping" the matrix around PAC-MAN style
+    \item "wrapping" the matrix edges around PAC-MAN style
     \item considering all none-present elements equal to 0
 \end{itemize}
-As you may have discerned from the above example \eqref{eqn:convolution2}, we're going to be the using the third method of assuming these elements are equal to 0. In the context of image manipulation, we don't want to reduce the size of our images with every operation, and wrapping the image around doesn't really make sense (unless you're working with a sort of 360-degree panorama, where the left/right and top/bottom of the image does touch).
+As you may have discerned from the above example \eqref{eqn:convolution2}, we're going to be the using the third method of assuming these elements are equal to 0. In the context of image manipulation, we don't want to reduce the size of our images with every operation, and wrapping the image around doesn't really make sense (unless you're working with some sort of 360-degree panorama, where the left/right and top/bottom of the image actually do touch).
 
-\begin{enumerate}
+\begin{enumerate}[series=exercises, label=\textbf{Exercise} (\arabic*)]
 \item Calculate the convolutions of these three kernels:
     \begin{enumerate}
-        \item
+        \item \threebythree{0}{1}{0}{1}{1}{1}{0}{1}{0}
+        \item \threebythree{0}{1}{0}{1}{-4}{1}{0}{1}{0}
+        \item \threebythree{0}{\frac{1}{5}}{0}{\frac{1}{5}}{\frac{1}{5}}{\frac{1}{5}}{0}{\frac{1}{5}}{0}
     \end{enumerate}
     with these three matrices:
     \begin{enumerate}
-        \item
+        \item \threebythree{0}{1}{0}{0}{1}{0}{0}{1}{0}
+        \item \threebythree{1}{2}{1}{2}{3}{2}{1}{2}{1}
+        \item \threebythree{5}{4}{3}{4}{3}{2}{3}{2}{1}
     \end{enumerate}
-    What do you notice about their effects? How do the results of kernel 2 differ from kernel 3?
+    What do you notice about their effects? How do the results of kernel (a)
+    differ from kernels (b) and (c)?
+    \solution{Kernels (b) and (c) preserve the amount of "energy"/brightness in the image, while (a) increases it.}  % TODO: math out the convolutions
 \item Can you think of an "identity" kernel, that returns the same image?
 \solution{\threebythree{0}{0}{0}{0}{1}{0}{0}{0}{0} or similar (could be
 different dimensions)}
-
 \end{enumerate}
 
-\subsection{Convolution for Image Manipulation}  % TODO: (Evan)
-% new operations allowed, like:
-Convolution can be implemented on two dimensional arrays for a number of applications. Specific kernels can produce desired effects when convolved with digital images.
+\subsection{Data Types, Numpy, and Matplotlib}
+
+Before we turn you loose to start working with convolution and images in Python, we're going to give you some tips for working with images as matrices. These mainly revolve around how Python/Numpy store data and how Matplotlib displays matrix data.
+
+First, lets talk about data types. You've probably heard about integers and floats in ModSim. The main difference between them is that integers store, well, integer values (numbers without a fractional component), while floats can represent fractions (or at least estimates of them). Generally Python is pretty good about knowing when to work with integers vs floats and converting between them, but Numpy can be a little more tricky (it introduces its own types, including (but not limited to) \lstinline{np.float32}, \lstinline{np.int16}, and \lstinline{np.uint8}).
+
+The numbers at the ends of those types are the number of bits that they use to store their values. A \emph{bit} (a portmanteau of \emph{binary digit}) can store either 0 or 1 for a value. Together, multiple bits can encode larger values. 8 bits are commonly called a \emph{byte}\footnote{But not always! In the past, \emph{byte} could refer to smaller or larger numbers of bits, depending on the computer. Technically, \emph{octet} the more specific and correct term.} and can represent 256, or $2^8$ different values.
+
+You might have noticed that we listed the \lstinline{np.uint8} type earlier and are asking yourself, \emph{"What does the 'u' mean?"}. In this case, \emph{u} means \emph{unsigned}, in the mathematical sense of +/-. If we want to store a number's sign, we need to use another bit. In most modern computers, it's preferable to use multiples of 8 for data types, so generally the signed variant of an integer loses a bit\footnote{Get it?} of value in order to store the sign. For example, the maximum value of the \lstinline{np.int8} data type is 127, and the minimum value is -128, while the maximum and minimum values of \lstinline{np.uint8} are 255 and 0, respectively. Note that both types can represent 256 different values. The best one to use varies from situation to situation.
+
+Why do we bring this up? Without understanding how the data types you use behave in certain situations, your code may exhibit some very peculiar behavior. One such case to consider about is \emph{integer overflow}. When a numerical data type exceeds its representable range it is known as \emph{overflow}\footnote{You might also come across the term \emph{underflow}, which can (confusingly) refer to either a data type exceeding the lower bound of its representable range, or a case in floating-point arithmetic where the value's precision cannot be properly represented.}. Depending on the language and system, this can cause the value to \emph{saturate} at the limit (\emph{e.g.} \lstinline{255 + 1 = 255} for an unsigned 8-bit integer) or to \emph{wrap} to the other limit (\emph{e.g.} \lstinline{-128 - 1 = 127} for a signed 8-bit integer).
+
+% TODO: fig: wikipedia's odometer physical overflow example
+
+You may be fortunate enough to encounter a warning or error when this case occurs. In other cases you won't have any indication except for funky behavior, and you'll be in a much better place for debugging if you know to check for overflows. At the time of this writing, numpy/scipy do not provide warnings when overflow occurs in convolution operations.
+
+\bex
+\item Create a number of type \lstinline{np.int8}. Cause it to overflow. Is this \emph{wrapping} or \emph{saturating} behavior?
+\solution{Numpy overflows wrap (\lstinline{np.int8(127) + np.int8(1)} yields \lstinline{-128}).}
+\eex
+
+In digital images, pixel values are commonly represented with 8 bits of precision, ranging in value from 0 to 255. Unsigned 8-bit integers are the perfect data type for storing images of this kind, but when working with them (adding, multiplying, \emph{etc.}) you should use a data type that can handle any potential changes in value from the operations. One such type is a signed integer with a higher precision such as \lstinline{np.int32}, but you don't get the benefits of floating-point arithmetic. We'll discuss this more after the break.
+
+\bex
+\item What kind of behavior could integer overflow cause when working with images?
+\solution{Sections of the image that should appear dark could appear light and \emph{vice versa}.}
+\eex
+
+% TODO: explain floats
+
+For image manipulation, we recommend using the \lstinline{np.float32} type, which will allow you to use decimal precision and work with images to your heart's content.
+
+An important thing to note is that the \lstinline{matplotlib.pyplot.imshow} function behaves differently for integers and floats. When displaying integer data, \lstinline{imshow} interprets values \emph{less than or equal to 0 as black}, and values \emph{greater than or equal to 255} as completely white/red/green/blue, depending on the context (2D arrays are interpreted as black/white and 3D arrays with a depth of size 3 are interpreted as RGB images). With float data on the other hand, \lstinline{imshow} interprets values \emph{less than or equal to 0.0 as black}, and values \emph{greater than or equal to 1.0} as completely white/red/green/blue.
+
+% TODO: link to scipy documentation
+
+This means that when converting between integer and float types, you'll want to scale between $[0,\ 255]$ and $[0.0,\ 1.0]$. Another function that may be useful is \lstinline{np.clip}, which you can you to lop off values outside of a given range (like $[0,\ 255]$).
+
+% TODO: talk about considerations with astype
+
+\subsection{Convolution for Image Manipulation}
+
+Convolution can be implemented on two-dimensional arrays for a number of applications. Specific kernels can produce desired effects when convolved with digital images. Unlike the matrix-wide scaling we used for brightness and contrast adjustment, convolution allows us to perform operations relative to a pixel's neighbors, like increasing local contrast between pixels for example.
 
 Read the \href{https://en.wikipedia.org/wiki/Kernel_(image_processing)}{Wikipedia page on image kernels} and implement the sharpness and edge detection techniques in Python.
 
-If you'd like more information, I would highly recommend \href{http://setosa.io/ev/image-kernels/}{Explained Visually's interactive page on image kernels}.
+If you'd like more information on how kernels and convolution work with images, I would highly recommend \href{http://setosa.io/ev/image-kernels/}{Explained Visually's interactive page on image kernels}.
 
-\begin{enumerate}[resume]
+\bex
 \item Sharpness:
 Find the kernel used for sharpening images in the Wikipedia article above, and try it out on a grayscale image (make sure the image isn't too large, or the results will be hard to see).
 \item Edge detection: Now use the kernel used in edge detection.
-\end{enumerate}
-
+\eex
 
 \subsection{Gamma Correction}  % TODO: (Hadleigh)
 \href{https://en.wikipedia.org/wiki/Gamma_correction}{link to Wikipedia page on Gamma Correction}
