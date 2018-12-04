@@ -55,7 +55,7 @@ def getBayer(filename: str, ver: int = 1):
     image file. This can be done from the commandline by passing the `--raw`
     flag into the `raspistill` program and from the `picamera` Python module by
     passing `bayer=True` into the `PiCamera.capture` function.
-    
+
     This uses code from the `picamera` module's documentation section on "Raw
     Bayer data captures". See https://picamera.readthedocs.io/en/release-1.13/recipes2.html#raw-bayer-data-captures
 
