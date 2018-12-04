@@ -1,0 +1,94 @@
+\documentclass{article}
+\usepackage{./paper}
+
+\title{Digital Camera Image Processing Pipeline Components}
+\author{Hadleigh Nunes and Evan Lloyd New-Schmidt}
+\date{Fall 2018}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+    In this paper we explore concepts and methods for processing digital images in the initial stages of image development, including demosaicing, gamma correction, and white balance correction.
+\end{abstract}
+
+\section{Introduction}
+
+% TODO: fig: overview of pipeline components
+
+% TODO: fig: bayer grid image
+\cite{picameradocs}
+
+% TODO: fig: bayer images comparison ala wikipedia
+
+% TODO: fig: gamma curves
+% TODO: fig: gamma correction image comparison
+
+% TODO: fig: white balance comparison
+
+\section{Mathematical Background}
+\begin{itemize}
+    \item background from linear algebra
+    Variance, covariance, eigenvectors, PCA, SVD.
+    
+    \item background from signal processing, specifically digital signal processing.
+    Convolution, convolution in two dimentions. 
+    
+\end{itemize}
+
+\section{Quantitative Procedure}
+
+\begin{itemize}
+    \item Debayering
+    The simplest method of debayering is nearest neighbor interpolation, which we implemented by convolving a  $3x3$ kernel with each of the color channels. In the raw image, the matrix of each color channel contains values only in pixels corresponding to a sencel of the corresponding color. Pixel locations corresponding to a different color channel are occupied by zeros. By convolving the matrix 
+    \begin{align}
+        \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1}
+    \end{align}
+    with each channel we are essentially averaging the adjacent pixel values of each pixel. This is a rudimentary technique, and will create some artifacts. 
+    \item Gamma Correction
+    Raw digital images often appear dark because the human eye perceives light non-linearly. To correct for this, the pixel values of a digital image are adjusted according to a power function. 
+
+    \begin{equation}
+        V_{out} = V_{in}^{\gamma}
+    \end{equation}
+    
+    \item Sharpening
+    \item White Balance 
+\end{itemize}
+
+\subsection{White Balance}
+
+\section{Results and discussion}
+
+\section{Conclusion}
+
+
+\section{Equations} 
+\begin{equation}
+    cov = (\textbf{X} - \mu_{x})(\textbf{X} - \mu_{x})^{T}
+\end{equation}
+
+\begin{equation}
+    \textbf{M} = \textbf{U} \textbf{$\Sigma$} \textbf{V}
+\end{equation}
+
+\begin{equation}
+    \textbf{U} = (\textbf{X} - \mu_{x}) \textbf{V} \Sigma^{-1}
+\end{equation}
+
+\begin{equation}
+    \textbf{W} = \textbf{U}_{Basis}^{T} \textbf{Im}
+\end{equation}
+
+% REFERENCES
+% References are listed in BibTeX format in the `references.bib` file.
+% You can use http://www.citationmachine.net/bibtex/ to create citations in that format.
+% Google Scholar will also output BibTeX - click on the quotes to cite and then select "BibTeX".
+% Zotero: right-click -> export... -> bibtex format
+% entries will only show up if they are used with \cite
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,references.bib}
+
+\end{document}
