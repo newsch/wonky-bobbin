@@ -5,9 +5,9 @@
 
 \fancypagestyle{firstpage}
 
-{\rhead{How Can Images Be Real If Our Cameras' Representations Of Light Aren't Real? \linebreak \textit{Version: \today}}}
+{\rhead{How Can Images Be Real If Our Cameras Aren't Real? \linebreak \textit{Version: \today} \linebreak \href{https://github.com/newsch/wonky-bobbin/blob/master/overnight/main.tex}{source}}}
 
-\title{Overnight Overnight: How Can Images Be Real If Our Cameras' Representations Of Light Aren't Real?}
+\title{Overnight Overnight: How Can Images Be Real If Our Cameras Aren't Real?}
 \author{QEA}
 \date{Fall 2018}
 
@@ -37,11 +37,8 @@
 % \end{enumerate}
 
 \section{Overview}
-The goal of this assignment is to get familiar with the concepts of digital image processing and the mathematical concepts involved with them. In this assignment you'll implement some of the more common photo manipulation methods and learn some concepts that will prepare you for further work in this area.
-\begin{itemize}
-\item this.
-\item and this.
-\end{itemize}
+
+The goal of this assignment is to get familiar with the concepts of digital image processing and the mathematical concepts involved with them. In this assignment you'll implement some common photo manipulation methods and learn some concepts that will prepare you for further work in this area.
 
 \section{Learning Goals}
 
@@ -53,31 +50,26 @@ images and the digital representation of them, including:
         \item Linear vs Nonlinear space and Gamma correction
         \item White Balance adjustment
     \end{itemize}
-% \item Understand how data is stored in bits/bytes and how that impacts various
-% operations and manipulations
+\item Understand how data is stored in bits/bytes and how that impacts various
+operations and manipulations
 % \item Feel comfortable working with matrix operations in Python and Jupyter notebooks
 \item Be able to implement basic linear interpolation debayering in Python
 \item Become comfortable with concepts needed for more advanced algorithms.
 \item Re-familiarize with PCA and Eigenspaces.
 \end{itemize}
 
+\section{Image manipulation}
 
-\section{Reference Material}
+\subsection{Review of Image Manipulation (now in Python) [1 hr]}
 
-\begin{itemize}
-\item \href{https://en.wikipedia.org/wiki/Bayer_filter
-}{Link to Wikipedia page on Bayer Grid}
-\item Some other cool stuff
-\end{itemize}
+Re-familiarize yourself with some of the image manipulation we did in the faces module, specifically the brightness and contrast section (problems 9-14) of \href{https://drive.google.com/file/d/0B7LNBbaxYFujOHpEU2FDdkF6VEE/view
+}{Module 2, Night 3}.
 
-\section{Image manipulation [3 hr]}
+\begin{enumerate}[series=exercises, label=\textbf{Exercise} (\arabic*)]
+    \item Implement problems 9-14 in Python, using numpy operations.
+\end{enumerate}
 
-\subsection{Review of Image Manipulation (now in Python)}
-\href{https://drive.google.com/file/d/0B7LNBbaxYFujOHpEU2FDdkF6VEE/view
-}{Link to faces assignment}
-Re-familiarize yourself with some of the image manipulation we did in the faces module, specifically the brightness and contrast section (problems 9-14) of the linked overnight. Implement these problems in Python, using numpy opperations
-
-\subsection{2D Convolution w/ Kernels}
+\subsection{2D Convolution w/ Kernels [2 hrs]}
 
 You already were introduced to the concept of convolution in \href{https://drive.google.com/file/d/1_eEtwNDHhF-Izfcf6l00PvG-b6whwety/view}{FitBit Night 2}. In this overnight assignment we're going to use it with discrete 2-dimensional signals: images!
 
@@ -91,7 +83,7 @@ Take the discrete convolution of these two 3x3 matrices for example:
 
 One way to read think of this (with the left matrix as our "kernel" and the right matrix as our "image") is \emph{"For every element in the image, sum the element multiplied by 2 and each of its neighbors multiplied by 0"}.
 
-In practice, this is equivalent to the following two operations:
+In practice, this is equivalent to both of the following operations:
 \begin{align}\label{eqn:convolution1}
     \begin{bmatrix}2\end{bmatrix} * \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1} =
     \threebythree{2}{2}{2}{2}{2}{2}{2}{2}{2}
@@ -124,11 +116,11 @@ One thing we haven't talked about yet is how to treat the elements on the edges 
 \begin{itemize}
     \item ignoring values in the matrix that aren't completely bordered (this results in a matrix with $n-2$ fewer rows and columns)
     \item "wrapping" the matrix edges around PAC-MAN style
-    \item considering all none-present elements equal to 0
+    \item considering all none-present elements equal to 0 (or alternatively, "padding" the matrix borders with zeros)
 \end{itemize}
-As you may have discerned from the above example \eqref{eqn:convolution2}, we're going to be the using the third method of assuming these elements are equal to 0. In the context of image manipulation, we don't want to reduce the size of our images with every operation, and wrapping the image around doesn't really make sense (unless you're working with some sort of 360-degree panorama, where the left/right and top/bottom of the image actually do touch).
+As you may have discerned from the above example \eqref{eqn:convolution2}, we're going to be the using the third method of treating these elements as if they are 0. In the context of image manipulation, we don't want to reduce the size of our images with every operation, and wrapping the image around doesn't really make sense (unless you're working with some sort of 360-degree panorama, where the left/right and top/bottom of the image actually do touch).
 
-\begin{enumerate}[series=exercises, label=\textbf{Exercise} (\arabic*)]
+\bex
 \item Calculate the convolutions of these three kernels:
     \begin{enumerate}
         \item \threebythree{0}{1}{0}{1}{1}{1}{0}{1}{0}
@@ -147,9 +139,9 @@ As you may have discerned from the above example \eqref{eqn:convolution2}, we're
 \item Can you think of an "identity" kernel, that returns the same image?
 \solution{\threebythree{0}{0}{0}{0}{1}{0}{0}{0}{0} or similar (could be
 different dimensions)}
-\end{enumerate}
+\eex
 
-\subsection{Data Types, Numpy, and Matplotlib}
+\subsection{Data Types, Numpy, and Matplotlib [30 min]}
 
 Before we turn you loose to start working with convolution and images in Python, we're going to give you some tips for working with images as matrices. These mainly revolve around how Python/Numpy store data and how Matplotlib displays matrix data.
 
@@ -174,7 +166,7 @@ In digital images, pixel values are commonly represented with 8 bits of precisio
 
 \bex
 \item What kind of behavior could integer overflow cause when working with images?
-\solution{Sections of the image that should appear dark could appear light and \emph{vice versa}.}
+\solution{One example: sections of the image that should appear dark could appear light and \emph{vice versa}.}
 \eex
 
 % TODO: explain floats
@@ -189,36 +181,44 @@ This means that when converting between integer and float types, you'll want to 
 
 % TODO: talk about considerations with astype
 
-\subsection{Convolution for Image Manipulation}
+\subsection{Convolution for Image Manipulation [1 hr]}
 
 Convolution can be implemented on two-dimensional arrays for a number of applications. Specific kernels can produce desired effects when convolved with digital images. Unlike the matrix-wide scaling we used for brightness and contrast adjustment, convolution allows us to perform operations relative to a pixel's neighbors, like increasing local contrast between pixels for example.
-
-Read the \href{https://en.wikipedia.org/wiki/Kernel_(image_processing)}{Wikipedia page on image kernels} and implement the sharpness and edge detection techniques in Python.
 
 If you'd like more information on how kernels and convolution work with images, I would highly recommend \href{http://setosa.io/ev/image-kernels/}{Explained Visually's interactive page on image kernels}.
 
 \bex
-\item Sharpness:
-Find the kernel used for sharpening images in the Wikipedia article above, and try it out on a grayscale image (make sure the image isn't too large, or the results will be hard to see).
-\item Edge detection: Now use the kernel used in edge detection.
+\item Read the \href{https://en.wikipedia.org/wiki/Kernel_(image_processing)}{Wikipedia page on image kernels}.
+
+\item Implement the sharpening kernel in the Wikipedia article above, and try it out on a grayscale image (make sure the image isn't too large, or the results will be hard to see).
+\item Implement the edge detection kernel. How does it compare to the kernels you worked with earlier?
 \eex
 
-\subsection{Gamma Correction}  % TODO: (Hadleigh)
+\subsection{Gamma Correction [1 hr]}  % TODO: (Hadleigh)
+
 \href{https://en.wikipedia.org/wiki/Gamma_correction}{link to Wikipedia page on Gamma Correction}
 Gamma correction is a technique to remap the pixel values of a digital image according to a logarithmic scale to range more readable to human eyes.
 \begin{enumerate}
     \item Use the numpy power function to raise each element in an array to a power between one and 0.
     \item Read the Wikipedia page and try using the value suggested there.
 \end{enumerate}
-\section{Intro to Demosaicing}
-\subsection{Background on Bayer filters}  % TODO: (Evan)
 
-% introduction
+\section{Demosaicing}
 
-% latest
+% \subsection{Background on Bayer filters}  % TODO: (Evan)
 
-\subsection{Simple Demosaicing w/ Convolution}
-The most basic method for debayering a digital color image is to simply use nearest neighbor interpolation. This can be accomplished quickly convolving the mosaic image with 3 by 3 kernel. Look back at \href{https://drive.google.com/file/d/1_eEtwNDHhF-Izfcf6l00PvG-b6whwety/view}{FitBit Night 2} problems 2 and 7 to remind yourself of how moving average filters and convolution work. Then implement this simple debayering in Python.
+\subsection{Simple Demosaicing w/ Convolution [1 hr]}
+
+% TODO: do grayscale first, then RGB
+
+The most basic method for debayering a digital color image is to simply calculate the average of the neighboring values, a form of \emph{bilinear interpolation}.
+
+\bex
+\item Look back at problems 2 and 7 of \href{https://drive.google.com/file/d/1_eEtwNDHhF-Izfcf6l00PvG-b6whwety/view}{FitBit Night 2} to remind yourself of how moving average filters and convolution work.
+\item Think through how you could use convolution to compute the components necessary to calculate the averages (for each pixel you'll need the sum of its neighbors of the same color, and the total number of neighbors).
+% TODO: provide array of Bayer grid data
+\item Implement this form of debayering in Python.
+\eex
 
 % note artifacts
 % what else is needed?
@@ -226,13 +226,17 @@ The most basic method for debayering a digital color image is to simply use near
 % - gamma correction
 % - white balance
 
-\section{Advanced Demosaicing/White Balance foundations}
+% \section{Advanced Demosaicing/White Balance foundations}
 
-\subsection{Prep for other algorithm}  % TODO: decide on another algorithm to discuss
+% \subsection{Prep for other algorithm}  % TODO: decide on another algorithm to discuss
 
-\subsection{PCA denoising algorithm}  % TODO: (Hadleigh)
-Local Pixel Grouping and Principal Component Analysis are commonly used in image denoising algorithms. Image noise is mostly spatially independent, meaning that by analyzing the principal components of small groups of pixels, the noise patterns can be determined.
-\href{https://www4.comp.polyu.edu.hk/~cslzhang/paper/PR_10_x_3.pdf}{Here is a paper detailing a LPG and PCA based denoising algorithm}. Scan the paper, paying most attention to the procedure needed to implement this process. Write out pseudo-code for the procedure. %TODO: Write and scan pseudocode (Hadleigh)
+\subsection{PCA denoising algorithm [1 hr]}  % TODO: (Hadleigh)
+
+Local Pixel Grouping and Principal Component Analysis are commonly used in image denoising algorithms. Image noise is mostly spatially independent, meaning that by analyzing the principal components of small groups of pixels, the noise patterns can be determined. \href{https://www4.comp.polyu.edu.hk/~cslzhang/paper/PR_10_x_3.pdf}{Here is a paper detailing a LPG and PCA based denoising algorithm}.
+
+\bex
+\item Scan the paper, paying most attention to the procedure needed to implement this process. Write out pseudo-code for the procedure. %TODO: Write and scan pseudocode (Hadleigh)
+\eex
 
 \begin{align}
  \mu_{d} = \frac{1}{N} \sum_{i=1}^{N} d_{i} \label{eqn:Mean}
@@ -243,18 +247,6 @@ Local Pixel Grouping and Principal Component Analysis are commonly used in image
 \end{align}
 
 \eqref{eqn:Mean} is the equation for the mean value of an image. This value should be subtracted from the matrix of pixel values to mean center the image for co-variance \eqref{eqn:Covariance} and eigen decomposition.
-
-
-
-
-\begin{enumerate}[resume]
-\item And some exercises!
-\end{enumerate}
-
-
-
-
-Uncomment this to get a figure.
 
 %\begin{figure}
 %\includegraphics[width=11cm]{figs/Saddle_point_contour.pdf}
