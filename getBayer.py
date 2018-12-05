@@ -15,6 +15,33 @@ bayerGrid[0::2, 0::2, 1] = 1 # Green
 bayerGrid[1::2, 1::2, 1] = 1 # Green
 bayerGrid[0::2, 1::2, 2] = 1 # Blue
 
+def get_bayer_grid(width: int, height: int):
+    """Create a Numpy bayer grid representation for a given size.
+
+    Uses the BGGR pattern of the Raspberry Pi camera sensor.
+    """
+    bayerGrid = np.zeros((height, width, 3), dtype=bool)
+    bayerGrid[1::2, 0::2, 0] = 1 # Red
+    bayerGrid[0::2, 0::2, 1] = 1 # Green
+    bayerGrid[1::2, 1::2, 1] = 1 # Green
+    bayerGrid[0::2, 1::2, 2] = 1 # Blue
+    return bayerGrid
+
+
+def debayerize(bayer_data, bayer_grid=None):
+    """Interpolate bayer data of an image using nearest-neighbor."""
+    if bayer_grid is None:
+        h, w, d = bayer_data.shape
+        bayer_grid = get_bayer_grid(width=w, height=h)
+    kernel = np.ones((3,3), dtype=np.float)
+    data_conv = rgb_convolve(bayer_data, kernel)
+    grid_conv = rgb_convolve(bayer_grid, kernel)
+    interpolated = data_conv / grid_conv
+    # fill in missing data in bayer_data with interpolated
+    result = bayer_data.copy()
+    result[bayer_grid == 0] = interpolated[bayer_grid == 0]
+    return result
+
 
 def get_rgb_array(fp, dtype=np.uint64, width: int = None, height: int = None):
     """Return a 3-dimensional RGB numpy array of an image."""
