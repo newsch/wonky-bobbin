@@ -25,7 +25,7 @@
     \centering
     \includegraphics[width=\columnwidth]{bggr_bayer_pattern}
     \caption{Example of the BGGR Bayer grid used by the Raspberry Pi camera. Included from the \lstinline{picamera} module documentation\cite{picameradocs}.}
-    \label{fig:my_label}
+    \label{fig:bayer_pattern}
 \end{figure}
 
 % TODO: fig: bayer images comparison ala wikipedia
@@ -34,6 +34,12 @@
 % TODO: fig: gamma correction image comparison
 
 % TODO: fig: white balance comparison
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=\columnwidth]{edge_zippering.pdf}
+    \caption{Example of zippering effect from demosaicing with bilinear interpolation.}
+    \label{fig:edge_zippering}
+\end{figure}
 
 \section{Mathematical Background}
 The mathematical procedures we use are based mainly in Linear Algebra, Multivariable Calculus and Signal Processing. The simplest method of debayering is nearest neighbor interpolation, which we implemented by convolving a  $3x3$ kernel with each of the color channels. In the raw image, the matrix of each color channel contains values only in pixels corresponding to a sencel of the corresponding color. Pixel locations corresponding to a different color channel are occupied by zeros. By convolving the matrix 
@@ -41,13 +47,13 @@ The mathematical procedures we use are based mainly in Linear Algebra, Multivari
         \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1}
     \end{align}
 with each channel we are essentially averaging the adjacent pixel values of each pixel, including those diagonally adjacent. This is a rudimentary technique, and will create some artifacts, one of the more prominent being a 'zippering' effect caused by %TODO: details on zippering
-There are many more complex approaches to debayering designed to reduce the artifacts created in the process. The first widely used such approach is the Kimmel algorithm, which models the image as a three dimensional surface composed of discreet surfaces j and interpolates in a direction orthogonal to the gradient, along the gentlest slope.
+There are many more complex approaches to debayering designed to reduce the artifacts created in the process. The first widely used such approach is the Kimmel algorithm\cite{kimmel_demosaicing:_1999}, which models the image as a piece-wise three dimensional surface, and interpolates in the direction orthogonal to the gradient, along the gentlest slope. The algorithm assumes that the ratio of red, green and blue values remains constant locally within continuous function elements; that is hue changes smoothly within the edges of a given element. The Kimmel algorithm approximates directional derivatives at every unknown pixel point, and assigns weights to each neighboring pixel inversely proportional to the magnitude of that derivative. The sum of the products of these pixels and their weights becomes the new interpolated value of the target point. 
+
 
 \section{Quantitative Procedure}
 
 \subsection{Debayering}
-    Out algorithm is based on a model of hue as a three dimensional surface. Similar to the Kimmel algorithm, we begin by interpolating missing values in the green channel, and then base the red and blue interpolations on the new green layer. 
-    
+
     
     
 \subsection{Gamma Correction}
@@ -56,17 +62,31 @@ There are many more complex approaches to debayering designed to reduce the arti
         V_{out} = AV_{in}^{\gamma} \label{eqn:Gamma}
     \end{equation}
     The expression \eqref{eqn:Gamma} is the general form of the gamma function, where $A$ is a constant scalar, $V_{in}$ and $V_{out}$ are the input and output signals, respectively. 
-    Typically for a "decoding" $\gamma$, a $\gamma$  function meant to re-scale a digital image for human viewing, a $\gamma < 1$ is used to enhance the visibility of non-white areas. 
+    Typically for a "decoding" $\gamma$, a $\gamma$ function meant to re-scale a digital image for human viewing, a $\gamma < 1$ is used to enhance the visibility of non-white areas. 
 \subsection{Sharpening}
     We use another convolution process to sharpen images. The kernel 
     \begin{align}
         \threebythree{0}{-1}{0}{-1}{5}{-1}{0}{-1}{0}
     \end{align}
-    when convolved with an image produces a sharpened image, as color values which are highly present in neighboring pixels are reduced if not as present in the target pixel. This kernel works well for relatively low resolution images, but when applied to images with higher pixel density, the results are minimal. 
+when convolved with an image produces a sharpened image, as color values which are highly present in neighboring pixels are reduced if not as present in the target pixel. This kernel works well for relatively low resolution images, but when applied to images with higher pixel density, the results are minimal. 
 
 \subsubsection{Peak Signal-to-Noise Ratio (PSNR)}
 
-Once we reconstruct the image using a demosaicing method, we compare it with the original image using Peak Signal-to-Noise Ratio (PSNR). This technique is used in several other papers to validate demosaicing techniques, including \cite{zapryanov_comparative_2008}, \cite{lukin_high-quality_2004}, and \cite{kimmel_demosaicing:_1999}.
+Once we reconstruct the image using a demosaicing method, we compare it with the original image using Peak Signal-to-Noise Ratio (PSNR). This technique is used in several other papers to validate demosaicing techniques (\cite{zapryanov_comparative_2008}, \cite{lukin_high-quality_2004}, and \cite{kimmel_demosaicing:_1999}).
+
+Given two color images, an input image $I$ and a reconstructed image $K$, of size $m$ x $n$ represented in RGB, the mean squared error ($MSE$) is calculated as
+
+\begin{equation}
+    \textit{MSE} = \frac{1}{3mn} \sum^{m-1}_{i=0} \sum^{n-1}_{j=0} \sum^{2}_{k=0} [I(i, j, k) - K(i, j, k)]^2
+\end{equation}
+
+and the PSNR is calculated as
+
+\begin{equation}
+    \textit{PSNR} = 10 \log_{10}{\frac{\textit{MAX}^2_I}{\textit{MSE}}}
+\end{equation}
+
+where $\textit{MAX}_I$ is the largest possible pixel value for the image. For the purposes of this paper we use 8-bit images, so $\textit{MAX}_I = 2^8 - 1 = 255$.
 
 %\subsection{White Balance}
 
@@ -74,6 +94,8 @@ Once we reconstruct the image using a demosaicing method, we compare it with the
 
 
 \section{Results and discussion}
+
+% TODO: fig: PSNR results w/ linear interpolation and Kimmel
 
 \section{Conclusion}
 
@@ -84,7 +106,11 @@ Once we reconstruct the image using a demosaicing method, we compare it with the
     I^{G} = \rho _{G}(X)<\hat{\mathbf{N}}(x),\vec{l}>
 \end{equation}
 $\vec{l}$ is the light source direction, $\hat{\mathbf{N}}(x)$ is the normal vector to the surface at a pixel point
-
+\begin{equation}
+    I^{R} = \rho _{R}(X)<\hat{\mathbf{N}}(x),\vec{l}> \label{eqn:surface}
+    I^{G} = \rho _{G}(X)<\hat{\mathbf{N}}(x),\vec{l}>
+\end{equation}
+where $\vec{l}$ is the light source direction, $\hat{\mathbf{N}}(x)$ is the normal vector to the surface at a pixel.
 \begin{equation}
     \tilde{\mathbf{I}}(x) = <\hat{\mathbf{N}}(x),\vec{l}>
 \end{equation}
