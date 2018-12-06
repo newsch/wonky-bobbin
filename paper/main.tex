@@ -41,7 +41,7 @@ The mathematical procedures we use are based mainly in Linear Algebra, Multivari
         \threebythree{1}{1}{1}{1}{1}{1}{1}{1}{1}
     \end{align}
 with each channel we are essentially averaging the adjacent pixel values of each pixel, including those diagonally adjacent. This is a rudimentary technique, and will create some artifacts, one of the more prominent being a 'zippering' effect caused by %TODO: details on zippering
-There are many more complex approaches to debayering designed to reduce the artifacts created in the process. The first widely used such approach is the Kimmel algorithm, which models the image as a three dimensional surface, and interpolates in a direction orthogonal to the gradient, along the gentlest slope.
+There are many more complex approaches to debayering designed to reduce the artifacts created in the process. The first widely used such approach is the Kimmel algorithm, which models the image as a three dimensional surface composed of discreet surfaces j and interpolates in a direction orthogonal to the gradient, along the gentlest slope.
 
 \section{Quantitative Procedure}
 
@@ -64,7 +64,7 @@ There are many more complex approaches to debayering designed to reduce the arti
     \end{align}
     when convolved with an image produces a sharpened image, as color values which are highly present in neighboring pixels are reduced if not as present in the target pixel. This kernel works well for relatively low resolution images, but when applied to images with higher pixel density, the results are minimal. 
 
-\subsection{Peak Signal-to-Noise Ratio (PSNR)}
+\subsubsection{Peak Signal-to-Noise Ratio (PSNR)}
 
 Once we reconstruct the image using a demosaicing method, we compare it with the original image using Peak Signal-to-Noise Ratio (PSNR). This technique is used in several other papers to validate demosaicing techniques, including \cite{zapryanov_comparative_2008}, \cite{lukin_high-quality_2004}, and \cite{kimmel_demosaicing:_1999}.
 
@@ -90,7 +90,7 @@ $\vec{l}$ is the light source direction, $\hat{\mathbf{N}}(x)$ is the normal vec
 \end{equation}
 
 \begin{equation}
-    \frac{\mathbf{I^{i}}}{\mathbf{I^{j}}} = \frac{\rho _{i}(X)\tilde{\mathbf{I}}(x){\rho _{j}(X)\tilde{\mathbf{I}}_{j}} = 
+    \frac{\mathbf{I^{i}}}{\mathbf{I^{j}}} = \frac{\rho _{i}(X)\tilde{\mathbf{I}}(x)}{\rho _{j}(X)\tilde{\mathbf{I}}(x)} = \frac{c_{i}}{c_{j}} = constant
 \end{equation}
 
 \begin{equation}
