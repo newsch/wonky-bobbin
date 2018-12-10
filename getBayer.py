@@ -160,3 +160,82 @@ def getBayer(filename: str, ver: int = 1):
     np.max(rgb8)
 
     return rgb8
+
+
+def debayer_malvar(img):
+    """Debayer an image using the method proposed in Malvar et al.
+
+    This method uses different filters for different cells in the
+    The default values for alpha, beta, and gamma are the approximate Wiener
+    values proposed by the paper.
+    """
+    def norm(k):
+        return k / np.sum(k)
+
+    # kernels for processing
+    GatR = np.array([[0,0,-1,0,0],
+                    [0,0,2,0,0],
+                    [-1,2,4,2,-1],
+                    [0,0,2,0,0],
+                    [0,0,-1,0,0]])  # Green at red pixels
+    GatB = GatR
+    RatGRB = np.array([[0,0,.5,0,0],
+                    [0,-1,0,-1,0],
+                    [-1,4,5,4,-1],
+                    [0,-1,0,-1,0],
+                    [0,0,.5,0,0]])  # Red at Green, in Red row, Blue column
+    RatGBR = RatGRB.T
+    BatGBR = RatGRB
+    BatGRB = RatGBR
+    RatB = np.array([[0,0,-1.5,0,0],
+                    [0,2,0,2,0],
+                    [-1.5,0,6,0,-1.5],
+                    [0,2,0,2,0],
+                    [0,0,-1.5,0,0]])
+    BatR = RatB
+
+    # slices for grabbing specific colors
+    Grows1 = slice(None,None,2)
+    Gcols1 = Grows1
+    Grows2 = slice(1,None,2)
+    Gcols2 = Grows2
+
+    Rrows = slice(1,None,2)
+    Rcols = slice(None,None,2)
+
+    Brows = slice(None,None,2)
+    Bcols = slice(1,None,2)
+
+    # indices for colors (cols, rows)
+    # ideally these could be used directly, but the star operator doesn't seem
+    # to work with slicing
+    # iGatR = (Rcols,Rrows)
+    # iGatB = (Bcols,Brows)
+    # iRatGRB = (Gcols1,Grows1)
+    # iBatGRB = iRatGRB
+    # iRatGBR = (Gcols2,Grows2)
+    # iBatGBR = iRatGBR
+    # iRatB = (Bcols,Brows)
+    # iBatR = (Rcols,Rrows)
+
+    # actual demosaicing
+    b = img.copy().sum(axis=2)  # flatten bayer data into 2-dimensional array
+    debayered = img.copy()  # array to return, initially bayer data
+
+    dGatR = convolve(b, norm(GatR))  # data for GatR and GatB
+    debayered[Rrows,Rcols,1] = dGatR[Rrows,Rcols]
+    debayered[Brows,Bcols,1] = dGatR[Brows,Bcols]
+
+    dRatB = convolve(b, norm(RatB))  # data for RatB and BatR
+    debayered[Brows,Bcols,0] = dRatB[Brows,Bcols]
+    debayered[Rrows,Rcols,2] = dRatB[Rrows,Rcols]
+
+    dRatGRB = convolve(b, norm(RatGRB))  # data for RatGRB and BatGBR
+    debayered[Grows1,Gcols1,0] = dRatGRB[Grows1,Gcols1]
+    debayered[Grows2,Gcols2,2] = dRatGRB[Grows2,Gcols2]
+
+    dRatGBR = convolve(b, norm(RatGBR))  # data for RatGBR and BatGRB
+    debayered[Grows2,Gcols2,0] = dRatGBR[Grows2,Gcols2]
+    debayered[Grows1,Gcols1,2] = dRatGBR[Grows1,Gcols1]
+
+    return debayered
