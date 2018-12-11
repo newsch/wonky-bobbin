@@ -15,12 +15,12 @@ bayerGrid[0::2, 0::2, 1] = 1 # Green
 bayerGrid[1::2, 1::2, 1] = 1 # Green
 bayerGrid[0::2, 1::2, 2] = 1 # Blue
 
-def get_bayer_grid(width: int, height: int):
+def get_bayer_grid(width: int, height: int, dtype=np.float):
     """Create a Numpy bayer grid representation for a given size.
 
     Uses the BGGR pattern of the Raspberry Pi camera sensor.
     """
-    bayerGrid = np.zeros((height, width, 3), dtype=bool)
+    bayerGrid = np.zeros((height, width, 3), dtype=dtype)
     bayerGrid[1::2, 0::2, 0] = 1 # Red
     bayerGrid[0::2, 0::2, 1] = 1 # Green
     bayerGrid[1::2, 1::2, 1] = 1 # Green
@@ -32,11 +32,12 @@ def debayerize(bayer_data, bayer_grid=None):
     """Interpolate bayer data of an image using nearest-neighbor."""
     if bayer_grid is None:
         h, w, d = bayer_data.shape
-        bayer_grid = get_bayer_grid(width=w, height=h)
+        bayer_grid = get_bayer_grid(width=w, height=h, dtype=bayer_data.dtype)
     kernel = np.ones((3,3), dtype=np.float)
     data_conv = rgb_convolve(bayer_data, kernel)
     grid_conv = rgb_convolve(bayer_grid, kernel)
     interpolated = data_conv / grid_conv
+    # return interpolated
     # fill in missing data in bayer_data with interpolated
     result = bayer_data.copy()
     result[bayer_grid == 0] = interpolated[bayer_grid == 0]
@@ -239,3 +240,56 @@ def debayer_malvar(img):
     debayered[Grows1,Gcols1,2] = dRatGBR[Grows1,Gcols1]
 
     return debayered
+
+
+def psnr_rgb(control, test, max_value=1.0):
+    """Calculate the peak signal-to-noise ratio in dB between two RGB images."""
+    def mse_rgb(control, test):
+        """Calculate the mean squared error between two images."""
+        return np.sum((control - test)**2) / sum(control.shape)
+
+    assert control.shape == test.shape, 'Images are not the same size.'
+    assert not np.array_equal(control, test), 'Images are identical.'
+    return 10 * np.log10((max_value*3)**2 / mse_rgb(control, test))
+
+
+def debayer_nearest_neighbor(bayer_data):
+    """Demosaic an image using the nearest neighbor algorithm."""
+    h, w, d = bayer_data.shape
+    bayer_grid = get_bayer_grid(width=w, height=h)
+
+    debayered = bayer_data.copy()
+    roll1 = np.roll(debayered, shift=1, axis=0)
+    debayered[~bayer_grid] = roll1[~bayer_grid]
+    post_roll_grid = np.roll(bayer_grid, shift=1, axis=0) + bayer_grid
+
+    roll2 = np.roll(debayered, shift=1, axis=1)  # shift again for R and B values
+    debayered[~post_roll_grid] = roll2[~post_roll_grid]
+
+    return debayered
+
+
+def white_balance_gray_world(img):
+    """Correct white balance using the gray world algorithm."""
+    avgR, avgG, avgB = (np.mean(img[:,:,i]) for i in range(3))
+    rCorrection = avgR / avgG
+    bCorrection = avgB / avgR
+
+    corrected = img.copy()
+    corrected[:,:,0] = corrected[:,:,0] / rCorrection
+    corrected[:,:,2] = corrected[:,:,2] / bCorrection
+
+    return corrected
+
+
+def compress_gamma(img, A=1, gamma=2.2):
+    return A * img ** (1/gamma)
+
+
+def linear_to_srgb(img):
+    t = 0.0031308  # threshold for linear/gamma correction
+    a = 0.055
+    corrected = img.copy()
+    corrected[img <= t] = img[img <= t] * 12.92
+    corrected[img > t] = (compress_gamma(img, A=(1 + a), gamma=2.4) - a)[img > t]
+    return corrected
